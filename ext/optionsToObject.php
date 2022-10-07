@@ -2,12 +2,9 @@
 
 class OptionsToObject_Tag extends H2o_Node
 {
-    public $position;
-    private $variable;
-    private $seperator;
     private $shortcut;
     private $nodelist;
-    private $syntax = '/^(?P<var>[\w]+(:?\.[\w\d]+)*)\s+as\s+(?P<short>[\w]+(:?\.[\w\d]+)?)$/';
+    private $syntax = '/^(service.options)\s+as\s+(?P<short>[\w]+(:?\.[\w\d]+)?)$/';
 
     function __construct($argstring, $parser, $pos = 0)
     {
@@ -15,15 +12,14 @@ class OptionsToObject_Tag extends H2o_Node
             throw new TemplateSyntaxError('Invalid OptionsToObject tag syntax');
         }
 
-        # extract the long name, separator, and shortcut
-        $this->variable = $matches['var'];
+        # extract shortcut
         $this->shortcut = $matches['short'];
         $this->nodelist = $parser->parse('endOptionsToObject');
     }
 
     function render($context, $stream)
     {
-        $options = $context->getVariable($this->variable);
+        $options = $context->getVariable('service.options');
 
         $options_obj = array();
         foreach($options as $option) {
